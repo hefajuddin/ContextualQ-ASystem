@@ -9,7 +9,10 @@ def main():
     context = context_data["context"]
 
     # Define a sample question
-    question = "Who is Miton?"
+    while True:
+        question=input("Ask me: ")
+        if question !="":
+            break
 
     # Load model and tokenizer
     model_pipeline = load_model(CONFIG["model_name"], CONFIG["device"])
