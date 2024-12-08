@@ -3,7 +3,8 @@ from pathlib import Path
 import logging
 
 listOfFiles=[
-    f"data/context_data.json",
+    f"data/context_data.txt",
+    f"templates/index.html",
     f"models/qa_model.py",
     f"utils/data_loader.py",
     "config.py",

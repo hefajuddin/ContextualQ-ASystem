@@ -1,28 +1,29 @@
-import torch
-from utils.data_loader import load_context
 from models.qa_model import load_model, generate_answer
 from config import CONFIG
+from flask import Flask, render_template, request, jsonify
 
-def main():
-    # Load context from JSON
-    context_data = load_context("data/context_data.json")
-    context = context_data["context"]
-
-    # Define a sample question
-    while True:
-        question=input("Ask me: ")
-        if question !="":
-            break
-
+app = Flask(__name__)
     # Load model and tokenizer
-    model_pipeline = load_model(CONFIG["model_name"], CONFIG["device"])
+model_pipeline = load_model(CONFIG["model_name"], CONFIG["device"])
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+def load_dynamic_context():
+    # Load context from a text file or database
+    with open("data/context_data.txt", "r") as file:
+        return file.read()
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    context = load_dynamic_context()
+
+    question = request.json.get("message")
     # Generate the answer
     answer = generate_answer(context, question, model_pipeline, CONFIG["max_new_tokens"])
-
-    # Print the answer
-    print(f"Question: {question}")
-    print(f"Answer: {answer}")
+    return jsonify({"response": answer})
 
 if __name__ == "__main__":
-    main()
+    print("\033[92m" + "Server is running successfully on http://127.0.0.1:5000" + "\033[0m")
+    app.run(debug=True, port=5000)
